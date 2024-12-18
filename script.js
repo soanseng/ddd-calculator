@@ -1,27 +1,20 @@
 const medications = [
-    { name: 'Alprazolam', brandNames: ['Xanax', '安邦', 'Alpragin'], strengths: ['0.5 mg/tab', '1 mg/tab', '2 mg/tab'], ddd: 1 },
-    { name: 'Bromazepam', brandNames: ['Lexotan', 'Bropan'], strengths: ['1.5 mg/tab', '3 mg/tab'], ddd: 10 },
-    { name: 'Brotizolam', brandNames: ['Lendormin'], strengths: ['0.25 mg/tab'], ddd: 0.25 },
-    { name: 'Clonazepam', brandNames: ['Rivotril','克顛平'], strengths: ['0.5 mg/tab', '2 mg/tab'], ddd: 8 },
-    { name: 'Diazepam', brandNames: ['Valium'], strengths: ['2 mg/tab', '5 mg/tab'], ddd: 10 },
-    { name: 'Estazolam', brandNames: ['Eszo'], strengths: ['2 mg/tab'], ddd: 3 },
-    { name: 'Fludiazepam', brandNames: ['Erispan'], strengths: ['0.25 mg/tab'], ddd: 0.75 },
-    { name: 'Flunitrazepam', brandNames: ['FM2', 'Modipanol','Fallep服爾眠'], strengths: ['1 mg/tab', '2 mg/tab'], ddd: 1 },
-    { name: 'Flurazepam', brandNames: ['Dalmadorm','當眠多'], strengths: ['15 mg/cap', '30 mg/cap'], ddd: 30 },
-    { name: 'Lorazepam', brandNames: ['Ativan', 'lowen(0.5)', 'lorazin(1)','larparm(2)'], strengths: ['0.5 mg/tab', '1 mg/tab','2 mg/tab'], ddd: 2.5 },
-    { name: 'Midazolam', brandNames: ['Dormicum', '導美睡'], strengths: ['7.5 mg/tab', '15 mg/tab'], ddd: 15 },
-    { name: 'Nimetazepam', brandNames: ['Erimin'], strengths: ['5 mg/tab'], ddd: 5 },
-    { name: 'Nitrazepam', brandNames: ['Sleepin', '速入眠'], strengths: ['5 mg/tab'], ddd: 5 },
-    { name: 'Nordazepam', brandNames: ['Nordaz', 'Madar'], strengths: ['5 mg/tab'], ddd: 15 },
-    { name: 'Oxazolam', brandNames: ['Serenal'], strengths: ['10 mg/tab'], ddd: 30 },
-    { name: 'Triazolam', brandNames: ['Halcion', '酣樂欣'], strengths: ['0.25 mg/tab'], ddd: 0.25 },
-    { name: 'Zolpidem', brandNames: ['Stilnox', 'seminax'], strengths: ['10 mg/tab'], ddd: 10 },
-    { name: 'Zopiclone', brandNames: ['Imovane', 'Genclone' ], strengths: ['7.5 mg/tab'], ddd: 7.5 }
+    { name: 'Alprazolam', brandNames: ['Xanax', '安邦', 'Alpragin'], strengths: ['0.5 mg/tab', '1 mg/tab', '2 mg/tab'], ddd: 1, category: 'bzd' },
+    { name: 'Bromazepam', brandNames: ['Lexotan', 'Bropan'], strengths: ['1.5 mg/tab', '3 mg/tab'], ddd: 10, category: 'bzd' },
+    { name: 'Brotizolam', brandNames: ['Lendormin'], strengths: ['0.25 mg/tab'], ddd: 0.25, category: 'bzd' },
+    { name: 'Clonazepam', brandNames: ['Rivotril','克顛平'], strengths: ['0.5 mg/tab', '2 mg/tab'], ddd: 8, category: 'bzd' },
+    { name: 'Diazepam', brandNames: ['Valium'], strengths: ['2 mg/tab', '5 mg/tab'], ddd: 10, category: 'bzd' },
+    { name: 'Estazolam', brandNames: ['Eszo'], strengths: ['2 mg/tab'], ddd: 3, category: 'bzd' },
+    { name: 'Fludiazepam', brandNames: ['Erispan'], strengths: ['0.25 mg/tab'], ddd: 0.75, category: 'bzd' },
+    { name: 'Flunitrazepam', brandNames: ['FM2', 'Modipanol','Fallep服爾眠'], strengths: ['1 mg/tab', '2 mg/tab'], ddd: 1, category: 'bzd' },
+    { name: 'Flurazepam', brandNames: ['Dalmadorm','當眠多'], strengths: ['15 mg/cap', '30 mg/cap'], ddd: 30, category: 'bzd' },
+    { name: 'Lorazepam', brandNames: ['Ativan', 'lowen(0.5)', 'lorazin(1)','larparm(2)'], strengths: ['0.5 mg/tab', '1 mg/tab','2 mg/tab'], ddd: 2.5, category: 'bzd' },
+    { name: 'Midazolam', brandNames: ['Dormicum', '導美睡'], strengths: ['7.5 mg/tab', '15 mg/tab'], ddd: 15, category: 'bzd' },
+    { name: 'Nitrazepam', brandNames: ['Sleepin', '速入眠'], strengths: ['5 mg/tab'], ddd: 5, category: 'bzd' },
+    { name: 'Triazolam', brandNames: ['Halcion', '酣樂欣'], strengths: ['0.25 mg/tab'], ddd: 0.25, category: 'bzd' },
+    { name: 'Zolpidem', brandNames: ['Stilnox', 'seminax'], strengths: ['10 mg/tab'], ddd: 10, category: 'z-drug' },
+    { name: 'Zopiclone', brandNames: ['Imovane', 'Genclone' ], strengths: ['7.5 mg/tab'], ddd: 7.5, category: 'z-drug' }
 ];
-
-const seldomUsedMedications = [
-   'Nimetazepam', 'Nordazepam', 'Oxazolam', 
-]
 
 let warningThreshold = 5;
 let criticalThreshold = 10;
@@ -31,7 +24,34 @@ function initializeMedicationList() {
     const tbody = document.querySelector('#medicationTable tbody');
     tbody.innerHTML = '';
     
-    medications.forEach((med, index) => {
+    const categories = {
+        'bzd': 'Benzodiazepines',
+        'z-drug': 'Z-drugs'
+    };
+    
+    // Sort medications by category and name
+    const sortedMeds = [...medications].sort((a, b) => {
+        if (a.category !== b.category) {
+            return a.category === 'bzd' ? -1 : 1;
+        }
+        return a.name.localeCompare(b.name);
+    });
+
+    let currentCategory = '';
+    
+    sortedMeds.forEach((med, index) => {
+        // Add category header if category changes
+        if (currentCategory !== med.category) {
+            currentCategory = med.category;
+            const categoryRow = document.createElement('tr');
+            categoryRow.innerHTML = `
+                <td colspan="3" class="px-2 sm:px-6 py-2 sm:py-3 bg-gray-100">
+                    <div class="text-sm font-semibold text-gray-700">${categories[med.category]}</div>
+                </td>
+            `;
+            tbody.appendChild(categoryRow);
+        }
+
         const row = document.createElement('tr');
         row.innerHTML = `
             <td class="px-2 sm:px-6 py-2 sm:py-4 whitespace-nowrap">
