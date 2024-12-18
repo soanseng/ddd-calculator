@@ -21,8 +21,8 @@ let criticalThreshold = 10;
 
 // Initialize the medication list
 function initializeMedicationList() {
-    const tbody = document.querySelector('#medicationTable tbody');
-    tbody.innerHTML = '';
+    const medicationTable = document.getElementById('medicationTable');
+    medicationTable.innerHTML = '';
     
     const categories = {
         'bzd': 'Benzodiazepines',
@@ -43,46 +43,50 @@ function initializeMedicationList() {
         // Add category header if category changes
         if (currentCategory !== med.category) {
             currentCategory = med.category;
-            const categoryRow = document.createElement('tr');
-            categoryRow.innerHTML = `
-                <td colspan="3" class="px-2 sm:px-6 py-2 sm:py-3 bg-gray-100">
-                    <div class="text-sm font-semibold text-gray-700">${categories[med.category]}</div>
-                </td>
+            const categoryDiv = document.createElement('div');
+            categoryDiv.className = 'bg-gray-50 px-4 py-2';
+            categoryDiv.innerHTML = `
+                <div class="text-sm font-semibold text-gray-700">${categories[med.category]}</div>
             `;
-            tbody.appendChild(categoryRow);
+            medicationTable.appendChild(categoryDiv);
         }
 
-        const row = document.createElement('tr');
-        row.innerHTML = `
-            <td class="px-2 sm:px-6 py-2 sm:py-4 whitespace-nowrap">
-                <div class="text-xs sm:text-sm font-medium text-gray-900">
-                    ${med.name} (${med.brandNames[0]})
+        const medDiv = document.createElement('div');
+        medDiv.className = 'p-4 space-y-3';
+        medDiv.innerHTML = `
+            <div class="flex flex-col gap-4">
+                <div class="flex-1">
+                    <div class="text-sm font-medium text-gray-900">
+                        ${med.name} (${med.brandNames[0]})
+                    </div>
                     ${med.brandNames.length > 1 ? 
-                        `<div class="text-xs text-gray-500 mt-0.5">${med.brandNames.slice(1).join(', ')}</div>` 
+                        `<div class="text-xs text-gray-500 mt-1">${med.brandNames.slice(1).join(', ')}</div>` 
                         : ''}
-                    <div class="text-xs text-gray-500 mt-0.5">DDD: ${med.ddd} mg/day</div>
+                    <div class="flex items-baseline gap-3 mt-1">
+                        <div class="text-xs text-gray-500">DDD: ${med.ddd} mg/day</div>
+                        <div class="text-xs font-medium">
+                            Current: <span id="ddd_${index}" class="text-sm font-medium text-gray-900">0</span>
+                        </div>
+                    </div>
                 </div>
-            </td>
-            <td class="px-2 sm:px-6 py-2 sm:py-4">
-                <div class="space-y-2">
+                
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
                     ${med.strengths.map((strength, strengthIndex) => `
-                        <div class="flex items-center space-x-2">
-                            <span class="text-xs sm:text-sm text-gray-600">${strength}:</span>
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs text-gray-600 min-w-[80px]">${strength}:</span>
                             <input type="number" 
                                 id="tablets_${index}_${strengthIndex}"
                                 min="0"
-                                class="text-xs sm:text-sm w-16 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                                class="text-xs w-16 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                                 onchange="calculateDDD(${index})"
                             >
-                            <span class="text-xs sm:text-sm text-gray-600">tablets</span>
+                            <span class="text-xs text-gray-600">tablets</span>
                         </div>
                     `).join('')}
                 </div>
-            </td>
-            <td class="px-2 sm:px-6 py-2 sm:py-4 whitespace-nowrap">
-                <span id="ddd_${index}" class="text-xs sm:text-sm text-gray-900">0</span>
-            </td>`;
-        tbody.appendChild(row);
+            </div>
+        `;
+        medicationTable.appendChild(medDiv);
     });
 }
 
